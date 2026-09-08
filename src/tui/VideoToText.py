@@ -21,7 +21,10 @@ def downloader(video_url: str) -> None:
         pass#delete the mp4 files(3 stays for sound)
     pass
 
-def mp4_to_text(mp4_path: str, width: int = 120) -> None:
+def mp4SoundExtraction(mp4_path: str) -> None: #need to get the sound in a way that can be played from terminal.
+    pass
+
+def mp4ToText(mp4_path: str, width: int = 120) -> None: #probally gonna need to optimize this
     cap = cv2.VideoCapture(mp4_path)
 
     ascii_chars = "@#$%m*+=+-:.·` "
@@ -52,8 +55,8 @@ def mp4_to_text(mp4_path: str, width: int = 120) -> None:
                     apparently this is formula for rgb brightness? or human eye brightness? dunno how it works.
                     """
 
-                    brightnes = (299 * r + 0.587 * g + 0.114 * b)
-                    char_idx = (brightnes * (num_chars - 1)) / 255# ill miss spell all i want pycharm :P
+                    brightnes = (0.299 * r + 0.587 * g + 0.114 * b)
+                    char_idx = (brightnes * (num_chars - 1)) // 255# ill miss spell all i want pycharm :P
                     char = ascii_chars[char_idx]
 
                     line += f"\033[38;2;{r};{g};{b}m{char}"
