@@ -3,18 +3,33 @@ from typing import Optional
 import cv2
 import os
 import yt_dlp
-#im gonna use threading or async.io, im thinking threading is actually optmial here
-
+from concurrent.futures import ThreadPoolExecutor
 
 """
 ive been told in reviews that static typing is useful and makes code more readable,
 if anyone sees this file tell me if i did too much!
 """
-def downloaderQueue(video_url: str, playlist_url:Optional[str] = None) -> None:
-    if playlist_url:#concurancy? i might im addicted to it
-        pass # this needs to make a downloader instant for Each video in the yt playlist shorts or not
+
+#TODO: make a flagoption in tui for concurency = X defualt to 2
+Concurrency = 2
+
+def downloaderQueue(video_url: Optional[str] = None, playlist_url:Optional[str] = None) -> None: #stop being so easy this
+    if playlist_url:
+        ydl_opts = {'extract_flat': True, 'quiet': True}
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            playlist_info = ydl.extract_info(playlist_url, download=False)
+
+        if 'entries' in playlist_info:
+            urls = [
+                f"https://www.youtube.com/playlist?list={playlist_info['id']}"for entry in playlist_info['entries'] if entry
+            ]
+            with ThreadPoolExecutor(Concurrency) as executor:
+                executor.map(downloader, urls)
+
+
     elif video_url:
-        pass
+        downloader(video_url)
+
     else:
         raise ValueError("No video url provided")
 
